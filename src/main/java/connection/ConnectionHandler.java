@@ -48,9 +48,10 @@ public class ConnectionHandler implements Runnable {
 
     }
 
+
+
     public HttpResponse response(HttpRequest req) {
         String path = req.getPath();
-
 
         if (path.equalsIgnoreCase("/")) {
             List<HttpHeader> headers = new ArrayList<>();
