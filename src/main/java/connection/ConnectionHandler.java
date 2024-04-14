@@ -49,7 +49,12 @@ public class ConnectionHandler implements Runnable {
 
 
         if (path.equalsIgnoreCase("/")) {
-            return HttpResponse.builder().httpStatusCode(HttpStatusCode.OK).build();
+            List<HttpHeader> headers = new ArrayList<>();
+            headers.add(new HttpHeader("Content-Type", List.of("text/plain")));
+            headers.add(new HttpHeader("Content-Length",List.of("0")));
+            return HttpResponse.builder().httpStatusCode(HttpStatusCode.OK)
+                    .headers(headers)
+                    .build();
         } else if (path.startsWith("/echo/")) {
             int idx = path.indexOf("/echo/");
             String echoText = path.substring(6);

@@ -29,15 +29,17 @@ public class HttpResponse {
         sb.append(SPACE);
         sb.append(httpStatusCode.getText());
         sb.append(CRLF);
-        for(HttpHeader header : headers){
-            sb.append(header.getText());
-            sb.append(CRLF);
+        if(headers!=null) {
+            for (HttpHeader header : headers) {
+                sb.append(header.getText());
+                sb.append(CRLF);
+            }
         }
+        sb.append(CRLF);
         if(body!=null){
-//            sb.append(CRLF);
             sb.append(body);
-            sb.append(CRLF);
         }
+
         return sb.toString();
 
     }
