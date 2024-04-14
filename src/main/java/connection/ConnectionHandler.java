@@ -68,7 +68,23 @@ public class ConnectionHandler implements Runnable {
                     .headers(headers)
                     .body(echoText)
                     .build();
-        } else {
+        }
+        else if(path.equalsIgnoreCase("/user-agent")){
+
+            HttpHeader userAgentheader = req.getHeaders().stream().filter(x-> x.getKey().equalsIgnoreCase("User-Agent")).findFirst().get();
+            String body = userAgentheader.getValues().get(0);
+            List<HttpHeader> headers = new ArrayList<>();
+            headers.add(new HttpHeader("Content-Type", List.of("text/plain")));
+            headers.add(new HttpHeader("Content-Length", List.of(String.valueOf(body.length()))));
+
+            return HttpResponse.builder()
+                    .httpStatusCode(HttpStatusCode.OK)
+                    .headers(headers)
+                    .body(body)
+                    .build();
+
+        }
+        else {
             return HttpResponse.builder()
                     .httpStatusCode(HttpStatusCode.NOT_FOUND)
                     .build();
@@ -80,7 +96,7 @@ public class ConnectionHandler implements Runnable {
 
         String responseText = response.getText();
 
-        System.out.println("Response is  : "+ responseText);
+        System.out.println("Response is  : \n"+ responseText);
         byte[] responseBytes = responseText.getBytes(StandardCharsets.UTF_8);
 
         out.write(responseBytes);

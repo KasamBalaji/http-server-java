@@ -22,7 +22,9 @@ public class HttpParser {
         String startLine;
         try {
             startLine = br.readLine();
-            while (!(input = br.readLine()).equalsIgnoreCase("")) {
+            while ((input = br.readLine())!=null) {
+                if(input.equalsIgnoreCase(""))
+                    break;
                 headerLines.add(input);
             }
 
@@ -44,7 +46,7 @@ public class HttpParser {
                 String key = headerLine.split(":")[0];
                 String values = headerLine.split(":")[1];
 
-                List<String> valuesList = List.of(values.split(" "));
+                List<String> valuesList = List.of(values.split(";"));
 
                 HttpHeader header = new HttpHeader(key, valuesList);
                 headers.add(header);
