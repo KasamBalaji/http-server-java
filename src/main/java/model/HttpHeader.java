@@ -1,5 +1,6 @@
 package model;
 
+import constants.StringConstants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,4 +18,9 @@ public class HttpHeader {
     private List<String> values;
 
 
+    public String getText() {
+        return key +
+                StringConstants.COLON +
+                String.join(";", values);
+    }
 }
