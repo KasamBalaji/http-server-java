@@ -5,7 +5,6 @@ import java.net.Socket;
 public class Main {
   public static void main(String[] args) {
      try(ServerSocket serverSocket = new ServerSocket(4221)) {
-       serverSocket = new ServerSocket(4221);
        serverSocket.setReuseAddress(true);
        Socket clientSocket = serverSocket.accept(); // Wait for connection from client.
        System.out.println("accepted new connection");
