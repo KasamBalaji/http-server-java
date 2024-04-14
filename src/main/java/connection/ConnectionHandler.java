@@ -4,7 +4,8 @@ import enums.HttpStatusCode;
 import model.HttpHeader;
 import model.HttpRequest;
 import model.HttpResponse;
-import parser.HttpParser;
+import service.FileHandler;
+import service.HttpParser;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,8 +19,11 @@ public class ConnectionHandler implements Runnable {
 
     private Socket socket;
 
-    public ConnectionHandler(Socket clientSocket) {
+    private String directory;
+
+    public ConnectionHandler(Socket clientSocket, String directory) {
         this.socket = clientSocket;
+        this.directory = directory;
     }
 
 
@@ -84,13 +88,67 @@ public class ConnectionHandler implements Runnable {
                     .build();
 
         }
-        else {
-            return HttpResponse.builder()
-                    .httpStatusCode(HttpStatusCode.NOT_FOUND)
+        else if(path.contains("/files/")){
+            if(req.getHttpMethod().equalsIgnoreCase("GET"))
+                return getFileResponse(req);
+            else if(req.getHttpMethod().equalsIgnoreCase("POST"))
+                return writeFileResponse(req);
+        }
+
+        return HttpResponse.builder()
+                .httpStatusCode(HttpStatusCode.NOT_FOUND)
+                .build();
+
+
+    }
+
+    public  HttpResponse writeFileResponse(HttpRequest req){
+        String path = req.getPath();
+        String fileName = path.replaceFirst("^/files/","");
+
+        try{
+            FileHandler.writeFile(directory,fileName,req.getBody());
+            List<HttpHeader> headers = new ArrayList<>();
+            headers.add(new HttpHeader("Content-Type", List.of("text/plain")));
+            headers.add(new HttpHeader("Content-Length",List.of("0")));
+            return HttpResponse.builder().httpStatusCode(HttpStatusCode.CREATED)
+                    .headers(headers)
                     .build();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
     }
+
+
+    public HttpResponse getFileResponse(HttpRequest req){
+
+        String path = req.getPath();
+        String fileName = path.replaceFirst("^/files/","");
+        try {
+            String body = FileHandler.getFileAsString(directory,fileName);
+
+            List<HttpHeader> headers = new ArrayList<>();
+            headers.add(new HttpHeader("Content-Type", List.of("application/octet-stream")));
+            headers.add(new HttpHeader("Content-Length", List.of(String.valueOf(body.length()))));
+
+            return HttpResponse.builder()
+                    .httpStatusCode(HttpStatusCode.OK)
+                    .headers(headers)
+                    .body(body)
+                    .build();
+
+        } catch (IOException e) {
+            System.err.println("Unable to find file");
+            return HttpResponse.builder()
+                    .httpStatusCode(HttpStatusCode.NOT_FOUND)
+                    .build();
+
+        }
+
+    }
+
 
     public void writeResponse(HttpResponse response,OutputStream out) throws IOException {
 

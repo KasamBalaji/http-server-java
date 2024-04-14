@@ -16,6 +16,6 @@ public class HttpRequest {
     String httpMethod;
     String path;
     String version;
-
     List<HttpHeader> headers;
+    String body;
 }

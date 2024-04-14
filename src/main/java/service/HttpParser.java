@@ -1,4 +1,4 @@
-package parser;
+package service;
 
 import model.HttpHeader;
 import model.HttpRequest;
@@ -22,15 +22,19 @@ public class HttpParser {
         String startLine;
         try {
             startLine = br.readLine();
-            while ((input = br.readLine())!=null) {
-                if(input.equalsIgnoreCase(""))
-                    break;
+            while (!(input = br.readLine()).isEmpty()) {
                 headerLines.add(input);
             }
-
+            StringBuilder sb = new StringBuilder();
+            while (br.ready()) {
+                int read = br.read();
+                sb.append(Character.toChars(read));
+            }
+            String body= sb.toString();
             HttpRequest request = parseStartLine(startLine);
             List<HttpHeader> headers = parseHeaders(headerLines);
             request.setHeaders(headers);
+            request.setBody(body);
             return request;
         } catch (IOException | HttpParseException e) {
             throw new RuntimeException(e);
