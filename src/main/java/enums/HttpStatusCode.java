@@ -6,7 +6,7 @@ import lombok.Getter;
 public enum HttpStatusCode {
 
     OK("200", "OK"),
-    NOT_FOUND("400", "Not Found");
+    NOT_FOUND("404", "Not Found");
 
     @Getter
     public final String statusCode;

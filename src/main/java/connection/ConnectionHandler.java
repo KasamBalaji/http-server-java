@@ -80,6 +80,7 @@ public class ConnectionHandler implements Runnable {
 
         String responseText = response.getText();
 
+        System.out.println("Response is  : "+ responseText);
         byte[] responseBytes = responseText.getBytes(StandardCharsets.UTF_8);
 
         out.write(responseBytes);
